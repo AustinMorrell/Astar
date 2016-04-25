@@ -29,7 +29,7 @@ class Node:
 		return self.h + self.g
 	def setH(self, Goal):
 		self.goal = Goal
-		numb = (self.goal.pos[0] - self.pos[0]) + (self.goal.pos[1] - self.pos[1])
+		numb = abs(self.goal.pos[0] - self.pos[0]) + abs(self.goal.pos[1] - self.pos[1])
 		self.h = numb
 	def setG(self, val):
 		self.g = val
@@ -63,28 +63,30 @@ class Astar:
 		start = self._start
 		goal = self._goal
 		open.append(start)
-		print(open)
 		while open:						
 			open.sort(key = lambda x : x.f)
-			current = open[0]
-			open.remove(current)			
-			closed.append(current)
+			_current = open[0]
+			open.remove(self._current)			
+			closed.append(self._current)
 			i = 0
-			for adj in current.adjacents:
+			SetNeighbors()
+			for adj in _current.adjacents:
 				if adj.walkable and adj not in closed:
 					if adj not in open:
 						open.append(adj)
-						adj.parent = current						
+						adj.parent = _current						
 						adj.g = 10 if i < 4 else 14
 					else:
 						move = 10 if i < 4 else 14
-						movecost = move + current.g
+						movecost = move + _current.g
 						if movecost < adj.g: 
-							adj.parent = current						
+							adj.parent = _current						
 							adj.g = movecost
 							
 				i+=1
-				
+			
+		GetPath(self._goal)
+			
 	def GetPath(self, node):
 		path = []
 		current = node
@@ -107,4 +109,12 @@ class Astar:
 		b_right = self.space[Location + 11]
 		t_left = self.space[Location - 11]
 		t_right = self.space[Location - 9]
+		top.g = 10
+		bot.g = 10
+		left.g = 10
+		right.g = 10
+		b_left.g = 14
+		b_right.g = 14
+		t_left.g = 14
+		t_right.g = 14
 		self._current.adjacents = [top, bot, left, right, b_left, b_right, t_left, t_right]

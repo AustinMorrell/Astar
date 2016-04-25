@@ -33,13 +33,11 @@ def main():
 		i.draw(screen, (255, 255, 255))
 		
 	Traveler = Astar(searchSpace, Start, Goal, id)
-	
 	# -----------------------------------------------------
 	while not done:
-		
-		clock.tick(60)
-		pygame.display.flip()
 		Traveler.Run()
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT: sys.exit()
 		pygame.display.flip()
 	pygame.quit()
 	
