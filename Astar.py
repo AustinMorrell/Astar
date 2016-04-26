@@ -2,44 +2,44 @@ import pygame as gfx
 WINDOW_SIZE = [255, 255]
 screen = gfx.display.set_mode(WINDOW_SIZE)
 screen.fill((0,0,0))
+clock = gfx.time.Clock()
 
 class Node:
 	def __init__(self, x, y):
 		self.parent = None		
-		self.color = (255,255,255)
+		self.color = None
 		self.width = 20
 		self.height = 20
 		self.margin = 5
 		self.left = (self.margin + self.width) *  x + self.margin
 		self.top = (self.margin + self.height) *  y + self.margin
-		self.walkable = True
+		self.walkable = None
 		self.pos = (x, self.height - y)
 		self.f = None
 		self.g = None
 		self.h = None
-		self.color = (0, 0, 255) if (self.walkable == True) else (255,0,0)
 		self.adjacents = []
 		self.goal = None
 
-	def draw(self, screen, color):
+	def draw(self, screen):
+		if self.walkable == True: 
+			self.color = (0, 0, 255)  
+		else:
+			self.color = (255,0,0)
 		margin = self.margin
 		color = self.color
 		gfx.draw.rect(screen, color, (self.left , self.top, self.width, self.height))
-		gfx.display.flip()
+		gfx.time.wait(50)
+		gfx.display.flip()	
 		
-	def setWalk(self, walkable):
-		self.walkable = walkable
-		 
+	
 	def getF(self):
 		return self.h + self.g
+	
 	def setH(self, Goal):
 		self.goal = Goal
 		numb = abs(self.goal.pos[0] - self.pos[0]) + abs(self.goal.pos[1] - self.pos[1])
 		self.h = numb
-	def setG(self, val):
-		self.g = val
-	def setColor(self, val):
-		self.color = val
 
 class Astar:
 	def __init__(self, SearchSpace, Start, Goal, dims):
@@ -51,14 +51,6 @@ class Astar:
 		self._current = self._start
 		self.rows = dims[0]
 		self.cols = dims[1]
-	
-	def current(self):
-		return self._current
-		
-	def current(self, value):
-		self._current = value
-		
-	#def draw(self, screen, color):
 		
 		
 	def GetPath(self, node):
@@ -119,21 +111,29 @@ class Astar:
 				theNode = a
 		return theNode
 		
+	def drawPath(self, screen, color):
+		path = self.GetPath(self._goal)
+		for a in path:
+			margin = a.margin
+			color = a.color
+			gfx.draw.rect(screen, color, (self.left , self.top, self.width, self.height))
+		gfx.display.flip()
+		
 	def Run(self):
-		#self.Reset()
 		while self._current.parent != self._goal:
 			for i in self.space:
-				i.draw(screen, (255, 255, 255))
+				i.draw(screen)
 			self.OPEN.append(self._current)
 			self.SetNeighbors()
 			for a in self._current.adjacents:
-				a.parent = self._current
-				self.OPEN.append(a)
+				if a not in self.OPEN and a.walkable == True:
+					a.parent = self._current
+					self.OPEN.append(a)
 			self.OPEN.remove(self._current)
 			self.CLOSED.append(self._current)
 			self._current = self.FindLowestF()
 			for event in gfx.event.get():
 				if event.type == gfx.QUIT: sys.exit()
 			
-		self.GetPath(self._goal)
+		self.drawPath(screen, (0, 255, 0))
 			
