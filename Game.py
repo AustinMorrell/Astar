@@ -21,24 +21,24 @@ def main():
 	
 	pygame.init()
 	id = (xd,yd)
-	WINDOW_SIZE = [255, 255]
-	screen = pygame.display.set_mode(WINDOW_SIZE)
+	#WINDOW_SIZE = [255, 255]
+	#screen = pygame.display.set_mode(WINDOW_SIZE)
 	
 	pygame.display.set_caption("Astar")
 	done = False
 	clock = pygame.time.Clock()
-	screen.fill((0,0,0))
+	#screen.fill((0,0,0))
 	
-	for i in searchSpace:
-		i.draw(screen, (255, 255, 255))
+	#for i in searchSpace:
+		#i.draw(screen, (255, 255, 255))
 		
 	Traveler = Astar(searchSpace, Start, Goal, id)
 	# -----------------------------------------------------
 	while not done:
 		Traveler.Run()
+		pygame.display.flip()
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT: sys.exit()
-		pygame.display.flip()
 	pygame.quit()
 	
 main()
