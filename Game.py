@@ -13,10 +13,11 @@ def main():
 				n.walkable = False
 			else:
 				n.walkable = True
+			n.setColor()
 			searchSpace.append(n)
 			yd.append(y)
 			
-	Start = searchSpace[0]
+	Start = searchSpace[11]
 	Goal = searchSpace[99]
 	
 	for a in searchSpace:

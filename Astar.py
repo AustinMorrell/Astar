@@ -22,16 +22,17 @@ class Node:
 		self.goal = None
 
 	def draw(self, screen):
-		if self.walkable == True: 
-			self.color = (0, 0, 255)  
-		else:
-			self.color = (255,0,0)
 		margin = self.margin
 		color = self.color
 		gfx.draw.rect(screen, color, (self.left , self.top, self.width, self.height))
 		gfx.time.wait(50)
 		gfx.display.flip()	
 		
+	def setColor(self):
+		if self.walkable == True: 
+			self.color = (0, 0, 255)  
+		else:
+			self.color = (255,0,0)
 	
 	def getF(self):
 		return self.h + self.g
@@ -55,11 +56,11 @@ class Astar:
 		
 	def GetPath(self, node):
 		path = []
-		current = node
-		while(current != self._start):
-			path.append(current.parent)
-			current = current.parent
-			current.color = (0, 255, 0)
+		self._current = node
+		while(self._current != self._start):
+			path.append(self._current.parent)
+			self._current = self._current.parent
+			self._current.color = (0, 255, 0)
 		print(path)
 		return path
 		
@@ -69,37 +70,29 @@ class Astar:
 			if self.space[a] == self._current:
 				Location = a;
 		if Location - 10 < 100 and Location - 10 > -1:
-			top = self.space[Location - 10]
-			top.g = 10
-			self._current.adjacents.append(top)
+			self.space[Location - 10].g = 10
+			self._current.adjacents.append(self.space[Location - 10])
 		if Location + 10 < 100 and Location + 10 > -1:
-			bot = self.space[Location + 10]
-			bot.g = 10
-			self._current.adjacents.append(bot)
+			self.space[Location + 10].g = 10
+			self._current.adjacents.append(self.space[Location + 10])
 		if Location - 1 < 100 and Location - 1 > -1:
-			left = self.space[Location - 1]
-			left.g = 10
-			self._current.adjacents.append(left)
+			self.space[Location - 1].g = 10
+			self._current.adjacents.append(self.space[Location - 1])
 		if Location + 1 < 100 and Location + 1 > -1:
-			right = self.space[Location + 1]
-			right.g = 10
-			self._current.adjacents.append(right)
+			self.space[Location + 1].g = 10
+			self._current.adjacents.append(self.space[Location + 1])
 		if Location + 9 < 100 and Location + 9 > -1:
-			b_left = self.space[Location + 9]
-			b_left.g = 14
-			self._current.adjacents.append(b_left)
+			self.space[Location + 9].g = 14
+			self._current.adjacents.append(self.space[Location + 9])
 		if Location + 11 < 100 and Location + 11 > -1:
-			b_right = self.space[Location + 11]
-			b_right.g = 14
-			self._current.adjacents.append(b_right)
+			self.space[Location + 11].g = 14
+			self._current.adjacents.append(self.space[Location + 11])
 		if Location - 11 < 100 and Location - 11 > -1:
-			t_left = self.space[Location - 11]
-			t_left.g = 14
-			self._current.adjacents.append(t_left)
+			self.space[Location - 11].g = 14
+			self._current.adjacents.append(self.space[Location - 11])
 		if Location - 9 < 100 and Location - 9 > -1:
-			t_right = self.space[Location - 9]
-			t_right.g = 14
-			self._current.adjacents.append(t_right)
+			self.space[Location - 9].g = 14
+			self._current.adjacents.append(self.space[Location - 9])
 		
 	def FindLowestF(self):
 		lowestF = self._current.adjacents[0].f
@@ -120,7 +113,7 @@ class Astar:
 		gfx.display.flip()
 		
 	def Run(self):
-		while self._current.parent != self._goal:
+		while self._goal not in self.OPEN:
 			for i in self.space:
 				i.draw(screen)
 			self.OPEN.append(self._current)
@@ -128,8 +121,10 @@ class Astar:
 			for a in self._current.adjacents:
 				if a not in self.OPEN and a.walkable == True:
 					a.parent = self._current
+					a.color = (255,145,0)
 					self.OPEN.append(a)
 			self.OPEN.remove(self._current)
+			self._current.color = (117,117,117)
 			self.CLOSED.append(self._current)
 			self._current = self.FindLowestF()
 			for event in gfx.event.get():
