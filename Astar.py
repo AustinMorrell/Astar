@@ -61,7 +61,7 @@ class Astar:
 			path.append(self._current.parent)
 			self._current = self._current.parent
 			self._current.color = (0, 255, 0)
-		print(path)
+			print(self._current.parent)
 		return path
 		
 	def SetNeighbors(self):
@@ -113,16 +113,19 @@ class Astar:
 		gfx.display.flip()
 		
 	def Run(self):
+		g = 0
 		while self._goal not in self.OPEN:
 			for i in self.space:
 				i.draw(screen)
 			self.OPEN.append(self._current)
 			self.SetNeighbors()
 			for a in self._current.adjacents:
-				if a not in self.OPEN and a.walkable == True:
+				if self.space[g] not in self.CLOSED and a.walkable == True:
 					a.parent = self._current
 					a.color = (255,145,0)
 					self.OPEN.append(a)
+					g = g + 1
+				g = 0
 			self.OPEN.remove(self._current)
 			self._current.color = (117,117,117)
 			self.CLOSED.append(self._current)

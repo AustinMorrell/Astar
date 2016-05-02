@@ -11,6 +11,8 @@ def main():
 			n = Node(x, y)
 			if x >= 5 and x <= 6 and y >= 5 and y <= 8:
 				n.walkable = False
+			elif x == 0 or y == 0 or x == 9 or y == 9:
+				n.walkable = False
 			else:
 				n.walkable = True
 			n.setColor()
@@ -18,7 +20,7 @@ def main():
 			yd.append(y)
 			
 	Start = searchSpace[11]
-	Goal = searchSpace[99]
+	Goal = searchSpace[88]
 	
 	for a in searchSpace:
 		a.setH(Goal)
