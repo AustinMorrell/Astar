@@ -25,7 +25,7 @@ class Node:
 		margin = self.margin
 		color = self.color
 		gfx.draw.rect(screen, color, (self.left , self.top, self.width, self.height))
-		gfx.time.wait(5)
+		gfx.time.wait(4)
 		gfx.display.flip()	
 		
 	def setColor(self):
@@ -39,7 +39,7 @@ class Node:
 	
 	def setH(self, Goal):
 		self.goal = Goal
-		numb = abs(self.goal.pos[0] - self.pos[0]) + abs(self.pos[1] - self.goal.pos[1])
+		numb = abs(self.pos[0] - self.goal.pos[0]) + abs(self.pos[1] - self.goal.pos[1])
 		self.h = numb
 		
 class Astar:
@@ -61,7 +61,6 @@ class Astar:
 			path.append(self._current.parent)
 			self._current = self._current.parent
 			self._current.color = (0, 255, 0)
-			print(self._current.parent)
 		return path
 		
 	def SetNeighbors(self):
@@ -82,16 +81,16 @@ class Astar:
 			self.space[Location + 1].g = 10
 			self._current.adjacents.append(self.space[Location + 1])
 		if Location + 9 < 100 and Location + 9 > -1:
-			self.space[Location + 9].g = 14
+			self.space[Location + 9].g = 10
 			self._current.adjacents.append(self.space[Location + 9])
 		if Location + 11 < 100 and Location + 11 > -1:
-			self.space[Location + 11].g = 14
+			self.space[Location + 11].g = 10
 			self._current.adjacents.append(self.space[Location + 11])
 		if Location - 11 < 100 and Location - 11 > -1:
-			self.space[Location - 11].g = 14
+			self.space[Location - 11].g = 10
 			self._current.adjacents.append(self.space[Location - 11])
 		if Location - 9 < 100 and Location - 9 > -1:
-			self.space[Location - 9].g = 14
+			self.space[Location - 9].g = 10
 			self._current.adjacents.append(self.space[Location - 9])
 		
 	def drawPath(self, screen, color):
@@ -104,7 +103,7 @@ class Astar:
 		
 	def Run(self):
 		self.OPEN.append(self._current)
-		
+		J = 0
 		while True:
 		
 			self.OPEN.remove(self._current)
@@ -112,19 +111,20 @@ class Astar:
 			self.CLOSED.append(self._current)
 			
 			for i in self.space:
-				i.draw(screen)			
+				i.draw(screen)
 			
 			self.SetNeighbors()
 			for i in self._current.adjacents:
-				if i not in self.CLOSED and i.walkable == True:
+				if i not in self.OPEN and i not in self.CLOSED and i.walkable == True:
 					i.setF()
 					i.parent = self._current
 					i.color = (255,145,0)
 					self.OPEN.append(i)
-				else:
-					print("No can do, buddy!")
+					J = 0
+
 			self.OPEN.sort(key = lambda x : x.f)
-			self._current = self.OPEN[0]
+			self._current = self.OPEN[J]
+			J = J + 1
 			self.OPEN.append(self._current)
 			if self._current == self._goal or len(self.OPEN) <= 0:
 				break

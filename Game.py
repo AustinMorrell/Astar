@@ -1,3 +1,5 @@
+import os
+import sys
 import pygame
 from Astar import *
 
@@ -19,8 +21,10 @@ def main():
 			searchSpace.append(n)
 			yd.append(y)
 			
-	Start = searchSpace[11]
-	Goal = searchSpace[88]
+	s = input("Enter a Start: ")
+	g = input("Enter a Goal: ")
+	Start = searchSpace[s]
+	Goal = searchSpace[g]
 	Goal.color = (255,255,0)
 	
 	for a in searchSpace:
@@ -35,7 +39,9 @@ def main():
 	Traveler = Astar(searchSpace, Start, Goal, id)
 	# -----------------------------------------------------
 	Traveler.Run()
-	input()
+	d = raw_input("Press Enter to continue...")
+	os.system('cls')
+	main()
 	pygame.quit()
 	
 main()
