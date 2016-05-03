@@ -25,7 +25,7 @@ class Node:
 		margin = self.margin
 		color = self.color
 		gfx.draw.rect(screen, color, (self.left , self.top, self.width, self.height))
-		gfx.time.wait(50)
+		gfx.time.wait(5)
 		gfx.display.flip()	
 		
 	def setColor(self):
@@ -34,14 +34,14 @@ class Node:
 		else:
 			self.color = (255,0,0)
 	
-	def getF(self):
-		return self.h + self.g
+	def setF(self):
+		self.f = self.h + self.g
 	
 	def setH(self, Goal):
 		self.goal = Goal
-		numb = abs(self.goal.pos[0] - self.pos[0]) + abs(self.goal.pos[1] - self.pos[1])
+		numb = abs(self.goal.pos[0] - self.pos[0]) + abs(self.pos[1] - self.goal.pos[1])
 		self.h = numb
-
+		
 class Astar:
 	def __init__(self, SearchSpace, Start, Goal, dims):
 		self.OPEN = []
@@ -94,44 +94,40 @@ class Astar:
 			self.space[Location - 9].g = 14
 			self._current.adjacents.append(self.space[Location - 9])
 		
-	def FindLowestF(self):
-		lowestF = self._current.adjacents[0].f
-		theNode = self._current.adjacents[0]
-		for a in self._current.adjacents:
-			a.f = a.getF
-			if a.f < lowestF:
-				lowestF = a.f
-				theNode = a
-		return theNode
-		
 	def drawPath(self, screen, color):
 		path = self.GetPath(self._goal)
 		for a in path:
 			margin = a.margin
 			color = a.color
-			gfx.draw.rect(screen, color, (self.left , self.top, self.width, self.height))
+			gfx.draw.rect(screen, color, (a.left , a.top, a.width, a.height))
 		gfx.display.flip()
 		
 	def Run(self):
-		g = 0
-		while self._goal not in self.OPEN:
-			for i in self.space:
-				i.draw(screen)
-			self.OPEN.append(self._current)
-			self.SetNeighbors()
-			for a in self._current.adjacents:
-				if self.space[g] not in self.CLOSED and a.walkable == True:
-					a.parent = self._current
-					a.color = (255,145,0)
-					self.OPEN.append(a)
-					g = g + 1
-				g = 0
+		self.OPEN.append(self._current)
+		
+		while True:
+		
 			self.OPEN.remove(self._current)
 			self._current.color = (117,117,117)
 			self.CLOSED.append(self._current)
-			self._current = self.FindLowestF()
-			for event in gfx.event.get():
-				if event.type == gfx.QUIT: sys.exit()
 			
+			for i in self.space:
+				i.draw(screen)			
+			
+			self.SetNeighbors()
+			for i in self._current.adjacents:
+				if i not in self.CLOSED and i.walkable == True:
+					i.setF()
+					i.parent = self._current
+					i.color = (255,145,0)
+					self.OPEN.append(i)
+				else:
+					print("No can do, buddy!")
+			self.OPEN.sort(key = lambda x : x.f)
+			self._current = self.OPEN[0]
+			self.OPEN.append(self._current)
+			if self._current == self._goal or len(self.OPEN) <= 0:
+				break
+				
 		self.drawPath(screen, (0, 255, 0))
 			

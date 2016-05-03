@@ -21,6 +21,7 @@ def main():
 			
 	Start = searchSpace[11]
 	Goal = searchSpace[88]
+	Goal.color = (255,255,0)
 	
 	for a in searchSpace:
 		a.setH(Goal)
@@ -33,9 +34,8 @@ def main():
 		
 	Traveler = Astar(searchSpace, Start, Goal, id)
 	# -----------------------------------------------------
-	while not done:
-		Traveler.Run()
-		pygame.display.flip()
+	Traveler.Run()
+	input()
 	pygame.quit()
 	
 main()
